@@ -1,0 +1,328 @@
+{
+  "name": "Market Research & Business Case Generator with GPT-4o, Perplexity & Claude",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "76a873cb-d035-4ca4-8ca9-ca9d2b1d3aa1",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [
+        1024,
+        32
+      ],
+      "webhookId": "ef1cfdf4-c68f-44d6-8600-1ea3b9fd2025",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "id": "75de6535-e334-4d64-a57f-7260df401a9d",
+      "name": "Anthropic Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "position": [
+        1920,
+        224
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "anthropicApi": {
+          "id": "nAEKaLmFT9UvRrHd",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "update",
+        "documentURL": "Redacted",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.text }}"
+            }
+          ]
+        }
+      },
+      "id": "ce9f1ce5-2e12-4acc-ad9c-f92ba13ca246",
+      "name": "Google Docs",
+      "type": "n8n-nodes-base.googleDocs",
+      "position": [
+        2128,
+        32
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "googleApi": {
+          "id": "kaHYimlgK7nRanlR",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Chat Input Trigger",
+        "height": 500,
+        "width": 220
+      },
+      "id": "7932ae33-d1e4-4bb8-b38e-91b74435cb5f",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        976,
+        -160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "Define Research Scope",
+        "height": 500,
+        "width": 300,
+        "color": 5
+      },
+      "id": "0a490125-3a86-43cf-83c5-1b436e54e7ff",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1200,
+        -160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.chatInput }}"
+            },
+            {
+              "content": "You are a market research planner, and a Perplexity (research) prompt agent.\n\nYour task is to take the following user query and define a structured scope of research to guide AI agents. Break it down into the following components:\n1. Industry/Business Type\n2. Geographic Focus\n3. Key Trends to Research\n4. Potential Opportunities/Challenges\n5. Suggested Data Sources (public reports, industry benchmarks, etc.)\n\nOutput a prompt meant for Perplexity research node based on the components.",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "09e33798-af03-45bf-b0a0-a01aa654d8e3",
+      "name": "Research Scope Definer Agent",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        1248,
+        32
+      ],
+      "typeVersion": 1.8,
+      "credentials": {
+        "openAiApi": {
+          "id": "QE1MHI9bEdQpGcE1",
+          "name": "Research Scope Definer Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Perplexity Deep Research",
+        "height": 500,
+        "width": 220,
+        "color": 2
+      },
+      "id": "17d56e9a-735f-4195-963b-e5939a596728",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1504,
+        -160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "Business Case Builder",
+        "height": 500,
+        "width": 300,
+        "color": 5
+      },
+      "id": "16ca83ec-c18d-4196-8122-0ca4dfeb0871",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1728,
+        -160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": "sonar-deep-research",
+        "messages": {
+          "message": [
+            {
+              "content": "You are a professional market analyst with access to real-time data and reports.\n\nYour task is to conduct deep web research based on the following structured research scope. Provide a concise, well-cited summary for each of the following areas:\n- Industry trends\n- Consumer behavior\n- Competitive landscape\n- Regulatory or environmental factors\n- Key statistics and data\n\nUse reliable sources (government reports, industry publications, global databases). Include in-text citation links in markdown format.\n\nPresent the research summary in clear sections with headings.\n",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json.message.content }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "id": "4794c40e-9eef-4c91-9d31-56c07072537c",
+      "name": "Perplexity Business Case Deep Research",
+      "type": "n8n-nodes-base.perplexity",
+      "position": [
+        1568,
+        32
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "perplexityApi": {
+          "id": "gUt3uXWzXsDaS8NP",
+          "name": "Perplexity Deep Research"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.choices[0].message.content }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a business strategy consultant writing a professional market opportunity case study. You will receive user input from a Perplexity node which includes the thinking steps. exclude the content of the thinking steps, which is usually the content between <think> at the beginning of Perplexity's output. Use the structured topic scope and supporting research provided to write a well-organized, 1500-word case study. Your case study must include:  1. Executive Summary   2. Market Overview   3. Opportunity Analysis   4. Competitive Landscape   5. Challenges and Risks   6. Strategic Recommendations   7. Conclusion    Maintain a formal and analytical tone. Use section headers. Ensure insights are backed by the research provided.  "
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "2de9f3f6-5e61-47c1-842d-c7bf996d4a1b",
+      "name": "Claude Business Case Writer",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        1792,
+        32
+      ],
+      "typeVersion": 1.7
+    },
+    {
+      "parameters": {
+        "content": "Business Case Output on Google Docs",
+        "height": 500,
+        "width": 262,
+        "color": 3
+      },
+      "id": "dbc5fc4a-3f45-45f6-a34c-c302900dedd0",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2032,
+        -160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "🧠 Market Research Case Study Generator\nCategory: AI + Research | GPT + Perplexity | Business Strategy\nSkill Level: Intermediate\nUse Case: Market Research, Business Planning, Strategic Analysis\n\n📌 Description:\nThis template automates the creation of comprehensive, data-backed business case studies—perfect for entrepreneurs, analysts, consultants, and market researchers.\n\nFor more of such build + step-by-step video tutorials, check out:\nhttps://www.youtube.com/@Automatewithmarc\n\nJust send a simple message like:\n\n“Give me a market opportunity analysis of a bicycle rental business in North Africa.”\n\nAnd the workflow does the rest. It scopes your research topic, performs live web research, and crafts a well-structured 1500-word business case study—all automatically saved to Google Docs.\n\n🔧 How It Works:\n🟢 Chat Trigger:\nStart the workflow by sending a prompt via the built-in Chat interface (Langchain Chat Trigger).\n\n🧭 Research Scope Definer (GPT-4o):\nBreaks down the user input into structured components like industry, geography, trends, and challenges.\n\n🌐 Deep Research (Perplexity Sonar):\nPerforms live research to retrieve relevant industry data, consumer trends, competitive insights, and more.\n\n📘 Business Case Writer (Claude Sonnet):\nSynthesizes the findings into a detailed case study with sections including:\nExecutive Summary\nMarket Overview\nOpportunity Analysis\nCompetitive Landscape\nRisks & Challenges\nStrategic Recommendations\nConclusion\n📄 Google Docs Integration:\nThe final output is appended to a connected Google Doc, so all your insights are neatly stored and ready to share.\n🧰 Tools Used:\nOpenAI GPT-4o\nPerplexity Sonar Deep Research\nAnthropic Claude Sonnet\nGoogle Docs\nChat Trigger\n✅ Ideal For:\nBusiness consultants & strategy teams\nMarket researchers & analysts\nStartup founders & product managers\nEducators & MBA students",
+        "height": 1000,
+        "width": 980,
+        "color": 3
+      },
+      "id": "756b169a-3f46-4671-a8fe-62d7732a3911",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -288,
+        -688
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Claude Business Case Writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Research Scope Definer Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude Business Case Writer": {
+      "main": [
+        [
+          {
+            "node": "Google Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Scope Definer Agent": {
+      "main": [
+        [
+          {
+            "node": "Perplexity Business Case Deep Research",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity Business Case Deep Research": {
+      "main": [
+        [
+          {
+            "node": "Claude Business Case Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4b2fa045-99a7-47f5-8c85-a9e925fb4f2a",
+  "meta": {
+    "templateId": "5430",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "455a94eac72a25232d61aac36e2aee7bcb3554a15949c0f80305c8b123dcc2ef"
+  },
+  "id": "SdlIxhrQJ2b4ckpg",
+  "tags": []
+}
